@@ -187,7 +187,7 @@ pub async fn initialise_plugin(path: &path::Path) -> anyhow::Result<()> {
 	if code_path.to_lowercase().ends_with(".html") || code_path.to_lowercase().ends_with(".htm") || code_path.to_lowercase().ends_with(".xhtml") {
 		let url = format!("http://localhost:{}/", *PORT_BASE + 2) + path.join(code_path).to_str().unwrap();
 		let window = tauri::WebviewWindowBuilder::new(APP_HANDLE.get().unwrap(), plugin_uuid.replace('.', "_"), tauri::WebviewUrl::External(url.parse()?))
-			.title(plugin_uuid)
+			.title(manifest.name)
 			.visible(false)
 			.build()?;
 
