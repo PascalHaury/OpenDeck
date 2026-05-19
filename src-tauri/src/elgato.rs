@@ -54,9 +54,9 @@ pub async fn update_image(context: &crate::shared::Context, image: Option<&str>)
 			} else {
 				let img = image::load_from_memory(&bytes)?;
 				let img = match rotation {
-					90 => image::DynamicImage::ImageRgba8(image::imageops::rotate90(&img.into_rgba8())),
+					90 => image::DynamicImage::ImageRgba8(image::imageops::rotate270(&img.into_rgba8())),
 					180 => image::DynamicImage::ImageRgba8(image::imageops::rotate180(&img.into_rgba8())),
-					270 => image::DynamicImage::ImageRgba8(image::imageops::rotate270(&img.into_rgba8())),
+					270 => image::DynamicImage::ImageRgba8(image::imageops::rotate90(&img.into_rgba8())),
 					_ => img,
 				};
 				device.set_button_image(hw_pos, img).await?;
