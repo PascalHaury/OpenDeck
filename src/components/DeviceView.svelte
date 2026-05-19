@@ -8,6 +8,7 @@
 	import Key from "./Key.svelte";
 
 	import { inspectedInstance, inspectedParentAction } from "$lib/propertyInspector";
+	import { settings } from "$lib/settings";
 
 	import { invoke } from "@tauri-apps/api/core";
 
@@ -80,13 +81,17 @@
 	let focusedRow = 0;
 	let focusedCol = 0;
 
+	$: rotated90or270 = $settings?.rotation === 90 || $settings?.rotation === 270;
+	$: visualRows = rotated90or270 ? device.columns : device.rows;
+	$: visualCols = rotated90or270 ? device.rows : device.columns;
+
 	$: gridRowLengths = [
-		...Array(device.rows).fill(device.columns),
+		...Array(visualRows).fill(visualCols),
 		...(device.encoders > 0 ? [device.encoders] : []),
 		...(device.touchpoints > 0 ? [device.touchpoints] : []),
 	];
-	$: encoderRowIndex = device.rows;
-	$: touchpointRowIndex = device.rows + (device.encoders > 0 ? 1 : 0);
+	$: encoderRowIndex = visualRows;
+	$: touchpointRowIndex = visualRows + (device.encoders > 0 ? 1 : 0);
 
 	function flatIndexFromRowCol(row: number, col: number): number {
 		let index = 0;
@@ -190,15 +195,16 @@
 		on:focusin={handleGridFocusin}
 	>
 		<div class="flex flex-col" role="rowgroup">
-			{#each { length: device.rows } as _, r}
+			{#each { length: visualRows } as _, r}
 				<div class="flex flex-row" role="row">
-					{#each { length: device.columns } as _, c}
+					{#each { length: visualCols } as _, c}
+						{@const pos = rotated90or270 ? r * device.rows + c : r * device.columns + c}
 						<Key
-							context={{ device: device.id, profile: profile.id, controller: "Keypad", position: (r * device.columns) + c }}
-							bind:inslot={profile.keys[(r * device.columns) + c]}
+							context={{ device: device.id, profile: profile.id, controller: "Keypad", position: pos }}
+							bind:inslot={profile.keys[pos]}
 							on:dragover={handleDragOver}
-							on:drop={(event) => handleDrop(event, "Keypad", (r * device.columns) + c)}
-							on:dragstart={(event) => handleDragStart(event, "Keypad", (r * device.columns) + c)}
+							on:drop={(event) => handleDrop(event, "Keypad", pos)}
+							on:dragstart={(event) => handleDragStart(event, "Keypad", pos)}
 							{handlePaste}
 							size={device.id.startsWith("sd-") && device.rows == 4 && device.columns == 8 ? 192 : 144}
 							label="Key {String.fromCharCode(65 + r)}{c + 1}"
