@@ -12,7 +12,6 @@
 
 	import { copiedItem, inspectedInstance, inspectedParentAction, openContextMenu } from "$lib/propertyInspector";
 	import { CanvasLock, renderImage } from "$lib/rendererHelper";
-	import { settings } from "$lib/settings";
 
 	import { invoke } from "@tauri-apps/api/core";
 	import { listen } from "@tauri-apps/api/event";
@@ -167,14 +166,6 @@
 			}
 		}
 	})();
-
-	function clearAndRedraw() {
-		canvas?.getContext("2d")?.clearRect(0, 0, canvas.width, canvas.height);
-		slot = slot;
-	}
-	$: if ($settings?.rotation != undefined) {
-		clearAndRedraw();
-	}
 
 	async function triggerVirtualPress() {
 		if (!active || !context || !slot) return;

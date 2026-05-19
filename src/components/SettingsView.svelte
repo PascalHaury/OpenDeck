@@ -108,7 +108,14 @@
 
 		<div class="flex flex-row items-center m-2 space-x-2">
 			<label for="settings-rotation" class="text-neutral-400">Rotation:</label>
-			<input type="range" min="0" max="270" step="90" bind:value={$settings.rotation} id="settings-rotation" />
+			<div class="select-wrapper">
+				<select bind:value={$settings.rotation} id="settings-rotation">
+					<option value={0}>0°          </option>
+					<option value={90}>90°        </option>
+					<option value={180}>180°      </option>
+					<option value={270}>270°      </option>
+				</select>
+			</div>
 		</div>
 
 		<div class="flex flex-row items-center m-2 space-x-2">

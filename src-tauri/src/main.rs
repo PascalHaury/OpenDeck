@@ -6,7 +6,6 @@ mod device_sleep;
 mod elgato;
 mod events;
 mod plugins;
-mod rotation;
 mod shared;
 mod store;
 mod zip_extract;

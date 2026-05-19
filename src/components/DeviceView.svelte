@@ -194,6 +194,7 @@
 		on:keydown|capture={handleGridKeydown}
 		on:focusin={handleGridFocusin}
 	>
+		{#key $settings?.rotation}
 		<div class="flex flex-col" role="rowgroup">
 			{#each { length: visualRows } as _, r}
 				<div class="flex flex-row" role="row">
@@ -218,6 +219,7 @@
 				</div>
 			{/each}
 		</div>
+		{/key}
 
 		<div class="flex flex-row" role="row">
 			{#each { length: device.encoders } as _, i}

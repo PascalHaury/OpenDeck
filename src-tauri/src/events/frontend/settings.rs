@@ -40,6 +40,7 @@ pub async fn set_settings(_app: AppHandle, settings: crate::store::Settings) -> 
 
 	store.value = settings;
 	store.save()?;
+
 	Ok(())
 }
 
