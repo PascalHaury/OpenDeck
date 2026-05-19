@@ -107,18 +107,6 @@
 		</div>
 
 		<div class="flex flex-row items-center m-2 space-x-2">
-			<label for="settings-rotation" class="text-neutral-400">Rotation:</label>
-			<div class="select-wrapper">
-				<select bind:value={$settings.rotation} id="settings-rotation">
-					<option value={0}>0°          </option>
-					<option value={90}>90°        </option>
-					<option value={180}>180°      </option>
-					<option value={270}>270°      </option>
-				</select>
-			</div>
-		</div>
-
-		<div class="flex flex-row items-center m-2 space-x-2">
 			<label for="settings-background" class="text-neutral-400">Run in background:</label>
 			<input type="checkbox" bind:checked={$settings.background} id="settings-background" />
 			<Tooltip> If this option is enabled, {PRODUCT_NAME} will minimise to the tray and run in the background. </Tooltip>

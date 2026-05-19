@@ -35,7 +35,7 @@ pub async fn update_image(context: &crate::shared::Context, image: Option<&str>)
 		let is_touch_point = context.controller == "Keypad" && context.position >= key_count;
 
 		let hw_pos = context.position;
-		let rotation = crate::store::get_settings().map(|s| s.value.rotation).unwrap_or(0);
+		let rotation = crate::store::get_settings().map(|s| s.value.rotations.get(&context.device).copied().unwrap_or(0)).unwrap_or(0);
 
 		if let Some(image) = image {
 			let data = image.split_once(',').unwrap().1;

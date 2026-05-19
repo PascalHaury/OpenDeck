@@ -81,7 +81,8 @@
 	let focusedRow = 0;
 	let focusedCol = 0;
 
-	$: rotated90or270 = $settings?.rotation === 90 || $settings?.rotation === 270;
+	$: deviceRotation = $settings?.rotations?.[device.id] ?? 0;
+	$: rotated90or270 = deviceRotation === 90 || deviceRotation === 270;
 	$: visualRows = rotated90or270 ? device.columns : device.rows;
 	$: visualCols = rotated90or270 ? device.rows : device.columns;
 
@@ -194,15 +195,15 @@
 		on:keydown|capture={handleGridKeydown}
 		on:focusin={handleGridFocusin}
 	>
-		{#key $settings?.rotation}
+		{#key deviceRotation}
 		<div class="flex flex-col" role="rowgroup">
 			{#each { length: visualRows } as _, r}
 				<div class="flex flex-row" role="row">
 					{#each { length: visualCols } as _, c}
 						{@const pos =
-							$settings?.rotation === 90 ? (device.rows - 1 - c) * device.columns + r :
-							$settings?.rotation === 180 ? (device.rows - 1 - r) * device.columns + (device.columns - 1 - c) :
-							$settings?.rotation === 270 ? c * device.columns + (device.columns - 1 - r) :
+							deviceRotation === 90 ? (device.rows - 1 - c) * device.columns + r :
+							deviceRotation === 180 ? (device.rows - 1 - r) * device.columns + (device.columns - 1 - c) :
+							deviceRotation === 270 ? c * device.columns + (device.columns - 1 - r) :
 							r * device.columns + c}
 						<Key
 							context={{ device: device.id, profile: profile.id, controller: "Keypad", position: pos }}
