@@ -3,6 +3,7 @@ mod simplified_profile;
 
 use crate::shared::is_flatpak;
 
+use std::collections::HashMap;
 use std::fs;
 use std::io::Write;
 use std::path::{Path, PathBuf};
@@ -114,7 +115,7 @@ pub struct Settings {
 	pub language: String,
 	pub brightness: u8,
 	pub sleep_timeout_minutes: u16,
-	pub rotation: u16,
+	pub rotations: HashMap<String, u16>,
 	pub background: bool,
 	pub autolaunch: bool,
 	pub updatecheck: bool,
@@ -131,7 +132,7 @@ impl Default for Settings {
 			language: "en".to_owned(),
 			brightness: 50,
 			sleep_timeout_minutes: 0,
-			rotation: 0,
+			rotations: HashMap::new(),
 			background: !is_flatpak(),
 			autolaunch: false,
 			updatecheck: option_env!("OPENDECK_DISABLE_UPDATE_CHECK").is_none() && !is_flatpak(),

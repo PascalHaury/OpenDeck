@@ -3,7 +3,7 @@ export type Settings = {
 	language: string;
 	brightness: number;
 	sleep_timeout_minutes: number;
-	rotation: number;
+	rotations: { [deviceId: string]: number };
 	background: boolean;
 	autolaunch: boolean;
 	updatecheck: boolean;

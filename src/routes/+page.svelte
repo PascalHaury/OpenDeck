@@ -4,6 +4,7 @@
 
 	import { initPortBase } from "$lib/ports";
 	import { inspectedParentAction } from "$lib/propertyInspector";
+	import { settings } from "$lib/settings";
 	import { actionList, deviceSelector, profileManager } from "$lib/singletons";
 
 	import ActionList from "../components/ActionList.svelte";
@@ -47,6 +48,24 @@
 			</div>
 
 			<div class="flex flex-row items-center space-x-2" class:mr-4={Object.keys(devices).length > 0}>
+				{#if selectedDevice && $settings}
+					<div class="select-wrapper">
+						<select
+							value={$settings.rotations?.[selectedDevice] ?? 0}
+							on:change={(e) => {
+								if (!$settings) return;
+								$settings = { ...$settings, rotations: { ...$settings.rotations, [selectedDevice]: parseInt(e.currentTarget.value) } };
+							}}
+							aria-label="Rotation"
+							style="padding-right: 1.5rem;"
+						>
+							<option value={0}>0°</option>
+							<option value={90}>90°</option>
+							<option value={180}>180°</option>
+							<option value={270}>270°</option>
+						</select>
+					</div>
+				{/if}
 				<PluginManager />
 				<SettingsView />
 			</div>
