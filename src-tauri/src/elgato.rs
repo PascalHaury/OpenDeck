@@ -34,6 +34,13 @@ pub async fn update_image(context: &crate::shared::Context, image: Option<&str>)
 		let key_count = kind.key_count();
 		let is_touch_point = context.controller == "Keypad" && context.position >= key_count;
 
+		let hw_pos = if context.controller == "Keypad" && !is_touch_point {
+			let rotation = crate::store::get_settings().map(|s| s.value.rotation).unwrap_or(0);
+			crate::rotation::logical_to_hw(context.position, kind.row_count(), kind.column_count(), rotation)
+		} else {
+			context.position
+		};
+
 		if let Some(image) = image {
 			let data = image.split_once(',').unwrap().1;
 			let bytes = base64::engine::general_purpose::STANDARD.decode(data)?;
@@ -49,7 +56,7 @@ pub async fn update_image(context: &crate::shared::Context, image: Option<&str>)
 				let (r, g, b) = extract_average_colour(&image::load_from_memory(&bytes)?);
 				device.set_touchpoint_color(context.position - key_count, r, g, b).await?;
 			} else {
-				device.set_button_image(context.position, image::load_from_memory(&bytes)?).await?;
+				device.set_button_image(hw_pos, image::load_from_memory(&bytes)?).await?;
 			}
 		} else if context.controller == "Encoder" {
 			device
@@ -58,7 +65,7 @@ pub async fn update_image(context: &crate::shared::Context, image: Option<&str>)
 		} else if is_touch_point {
 			device.set_touchpoint_color(context.position - key_count, 0, 0, 0).await?;
 		} else {
-			device.clear_button_image(context.position).await?;
+			device.clear_button_image(hw_pos).await?;
 		}
 		device.flush().await?;
 	}
@@ -157,8 +164,24 @@ async fn init(device: AsyncStreamDeck, device_id: String) {
 		};
 		for update in updates {
 			match match update {
-				DeviceStateUpdate::ButtonDown(key) => inbound::devices::key_down(press(key)).await,
-				DeviceStateUpdate::ButtonUp(key) => inbound::devices::key_up(press(key)).await,
+				DeviceStateUpdate::ButtonDown(key) => {
+					let logical = if key < kind.key_count() {
+						let rotation = crate::store::get_settings().map(|s| s.value.rotation).unwrap_or(0);
+						crate::rotation::hw_to_logical(key, kind.row_count(), kind.column_count(), rotation)
+					} else {
+						key
+					};
+					inbound::devices::key_down(press(logical)).await
+				},
+				DeviceStateUpdate::ButtonUp(key) => {
+					let logical = if key < kind.key_count() {
+						let rotation = crate::store::get_settings().map(|s| s.value.rotation).unwrap_or(0);
+						crate::rotation::hw_to_logical(key, kind.row_count(), kind.column_count(), rotation)
+					} else {
+						key
+					};
+					inbound::devices::key_up(press(logical)).await
+				},
 				DeviceStateUpdate::TouchPointDown(point) => inbound::devices::key_down(press(kind.key_count() + point)).await,
 				DeviceStateUpdate::TouchPointUp(point) => inbound::devices::key_up(press(kind.key_count() + point)).await,
 				DeviceStateUpdate::EncoderTwist(dial, ticks) => inbound::devices::encoder_change(encoder(dial, ticks)).await,

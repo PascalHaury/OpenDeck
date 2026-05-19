@@ -107,7 +107,7 @@
 		</div>
 
 		<div class="flex flex-row items-center m-2 space-x-2">
-			<label for="settings-rotation" class="text-neutral-400">Image rotation:</label>
+			<label for="settings-rotation" class="text-neutral-400">Rotation:</label>
 			<input type="range" min="0" max="270" step="90" bind:value={$settings.rotation} id="settings-rotation" />
 		</div>
 
