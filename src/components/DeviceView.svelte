@@ -198,7 +198,11 @@
 			{#each { length: visualRows } as _, r}
 				<div class="flex flex-row" role="row">
 					{#each { length: visualCols } as _, c}
-						{@const pos = rotated90or270 ? r * device.rows + c : r * device.columns + c}
+						{@const pos =
+							$settings?.rotation === 90 ? (device.rows - 1 - c) * device.columns + r :
+							$settings?.rotation === 180 ? (device.rows - 1 - r) * device.columns + (device.columns - 1 - c) :
+							$settings?.rotation === 270 ? c * device.columns + (device.columns - 1 - r) :
+							r * device.columns + c}
 						<Key
 							context={{ device: device.id, profile: profile.id, controller: "Keypad", position: pos }}
 							bind:inslot={profile.keys[pos]}
